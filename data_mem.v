@@ -1,7 +1,8 @@
 //Data Memory
-module data_mem(clk,rw_enable,address,wr_data,re_data);
+module data_mem(clk,r_enable,w_enable,address,wr_data,re_data);
  input clk;
- input rw_enable; // 1 for write and 0 for read
+ input w_enable;
+ input r_enable;
  input [4:0]address; //for now, a 5bit wide address line as only 32 word memory considered
  input [31:0]wr_data;
  output reg[31:0]re_data;
@@ -17,11 +18,10 @@ module data_mem(clk,rw_enable,address,wr_data,re_data);
  
  always@(posedge clk)
  begin
-	if(rw_enable)
+	if(w_enable)
 		dmem[address] <= wr_data;
-	else
-		re_data = dmem[address];
-	//Here even if data mem is not used by an instruction, still we have a re_data output, which is managed by next stage Mux.
+	if(r_enable)
+		re_data <= dmem[address];
  end
  
 endmodule
