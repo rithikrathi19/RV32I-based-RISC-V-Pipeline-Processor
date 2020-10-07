@@ -35,7 +35,7 @@ module ALU(clk, A, B, ALUcontrol, result, zeroflag);
 				result = A<<B;
 				end
 		4'b0111: begin
-				result = {A[31],A[31:1]};
+			result = {A[31],A>>B};
 				end
 		default: begin	
 				result<= 32'd0;
