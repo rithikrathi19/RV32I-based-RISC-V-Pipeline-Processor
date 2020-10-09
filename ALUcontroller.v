@@ -5,7 +5,7 @@ module ALUcontrol(ALUop, funct_7, funct_3, operation);
 	output reg [3:0] operation;
 
 	always @(*) begin
-		if(((ALUop == 2'b10) && (funct_7 == 7'd0) && (funct_3 == 3'd0)) || ((ALUop == 2'b11) && (funct_3 == 3'd0)) || (ALUop = 2'b00)) 
+		if(((ALUop == 2'b10) && (funct_7 == 7'd0) && (funct_3 == 3'd0)) || ((ALUop == 2'b11) && (funct_3 == 3'd0)) || (ALUop == 2'b00)) 
 			operation = 4'd2; //ADD
 		else if((ALUop == 2'b01) || ((ALUop == 2'b10) && (funct_7 == 7'd32) && (funct_3 == 3'd0)))
 			operation = 4'd6; //SUBTRACT
