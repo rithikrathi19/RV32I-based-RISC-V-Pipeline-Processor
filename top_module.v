@@ -72,7 +72,8 @@ module top(rst,clk);
 	pipo_reg #(.N(151)) IDEX(IDEXout,IDEXin,clk,rst); 
 	ALUcontrol ALUC(controlsig_EX[7:6], funct7_EX, funct3_EX, ALUoperation);
 	ALU A1(clk, Rs1data_EX, ALUsrcb, ALUoperation, result, zeroflag);
-	mux #(.N(2)) m1(ALUsrcb,{Rs2data_EX,immgen_out_EX},controlsig_EX[5]); 
+	//mux #(.N(2)) m1(ALUsrcb,{Rs2data_EX,immgen_out_EX},controlsig_EX[5]); 
+	mux32 m1(ALUsrcb,Rs2data_EX,immgen_out_EX,controlsig_EX[5]);
 	adder #(.N(32)) add2(BRadd,IDEX_PC_out,{immgen_out_EX[30:0],1'b0}); //Full adder PC+offset
 	
 	//Between EX-MEM and MEM-WB Pipeline registers
@@ -113,11 +114,12 @@ module top(rst,clk);
 	assign controlsig_WB = MEMWBout[70:69];
 	
 	pipo_reg #(.N(71)) MEMWB(MEMWBout,MEMWBin,clk,rst);
-	mux #(.N(2)) M3(writedata,{WBsrcA,WBsrcB},controlsig_WB[1]);
+	//mux #(.N(2)) M3(writedata,{WBsrcA,WBsrcB},controlsig_WB[1]);
+	mux32 M3(writedata,WBsrcA,WBsrcB,controlsig_WB[1]);
 	regfile Rfile(Rs1,Rs2,Rd,writedata,controlsig_WB[0],clk,rst,Rs1data,Rs2data);//Register File
 	pipo_reg #(.N(32)) PC(PCout,PCin,clk,rst); //Program Counter
-	mux #(.N(2)) M1(PCin,{newPC,PCsrcB},PCsrc); //Mux for Program Counter
-	
+	//mux #(.N(2)) M1(PCin,{newPC,PCsrcB},PCsrc); //Mux for Program Counter
+	mux32 M1(PCin,newPC,PCsrcB,PCsrc);
 	
 endmodule
 	
