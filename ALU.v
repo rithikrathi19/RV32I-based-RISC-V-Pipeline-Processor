@@ -5,7 +5,7 @@ module ALU(clk, A, B, ALUcontrol, result, zeroflag);
 	output reg[31:0] result;
 	output reg zeroflag;
 		
-	always@(posedge clk)
+	always@(A,B)
 	begin
 		case(ALUcontrol)
 		4'b0000: begin
