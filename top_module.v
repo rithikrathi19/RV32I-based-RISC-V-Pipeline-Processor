@@ -8,7 +8,7 @@ module top(rst,clk);
 	wire [63:0]IFIDin = {newPC,instruction};
 	
 	
-	adder #(.N(32)) add1(newPC,PCout,32'd4); //Full adder for incrementing PC
+	adder #(.N(32)) add1(newPC,PCout,32'd1); //Full adder for incrementing PC
 	instr_mem imem(instruction,PCout,clk,rst); //Instr Memory
 	
 	
