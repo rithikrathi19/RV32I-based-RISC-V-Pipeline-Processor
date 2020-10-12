@@ -9,7 +9,7 @@ module instr_mem(instruction,PCin,clk,rst);
  integer i;
  
  initial
- $readmemh("instructions.txt", memloc);// Reading the coded instructions to the memory
+ $readmemh("instr1.txt", memloc);// Reading the coded instructions to the memory
  always@(posedge clk,posedge rst)
  begin
  
