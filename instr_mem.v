@@ -9,15 +9,17 @@ module instr_mem(instruction,PCin,clk,rst);
  integer i;
  
  initial
+ begin
  $readmemh("instr1.txt", memloc);// Reading the coded instructions to the memory
+ end
  always@(posedge clk,posedge rst)
  begin
  
 	if(rst)
 	begin
 		instruction <= 32'dZ;
-		for(i = 0; i < 32; i = i+1)
-		memloc[i] <= 32'd0;
+		//for(i = 0; i < 32; i = i+1)
+		//memloc[i] <= 32'd0;
 	end
 	
 	else
