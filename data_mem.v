@@ -3,7 +3,7 @@ module data_mem(clk,r_enable,w_enable,address,wr_data,re_data);
  input clk;
  input w_enable;
  input r_enable;
- input [4:0]address; //for now, a 5bit wide address line as only 32 word memory considered
+ input [31:0]address; //for now, a 5bit wide address line as only 32 word memory considered
  input [31:0]wr_data;
  output reg[31:0]re_data;
  

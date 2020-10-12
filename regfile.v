@@ -7,7 +7,6 @@ module regfile(
     input RegWrite,
     input clk,
     input rst,
-    input printr,
     output reg [31:0]readdataA,
     output reg [31:0]readdataB);
 
@@ -15,17 +14,6 @@ module regfile(
     always@(posedge rst) 
         $readmemh("regfile.txt",regs);
     
-    integer f,j;
-    always @ (posedge printr)
-    begin
-        f = $fopen("Result.txt", "w");
-            if (f)  $display("File was opened successfully : %0d", f);
-            else    $display("File was NOT opened successfully : %0d", f);		
-            for(j = 0; j < 32; j = j+1)
-                $fwrite(f, "%h\n", regs[j]);
-            $fclose(f);
-    end
-
     always@(readregA,readregB)
     begin
         readdataA <= regs[readregA];

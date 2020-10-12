@@ -69,10 +69,10 @@ module top(rst,clk);
 	
 	assign EXMEMin = {controlsig_EX[4:0],BRadd,zeroflag,result,Rs2data_EX,Rd_EX};
 	
-	pipo_reg #(.N(150)) IDEX(IDEXout,IDEXin,clk,rst); 
+	pipo_reg #(.N(151)) IDEX(IDEXout,IDEXin,clk,rst); 
 	ALUcontrol ALUC(controlsig_EX[7:6], funct7_EX, funct3_EX, ALUoperation);
-	ALU A1(clk, Rs1data_EX, B, ALUoperation, result, zeroflag);
-	mux #(.N(2)) (ALUsrcb,{Rs2data_EX,immgen_out_EX},controlsig_EX[5]); 
+	ALU A1(clk, Rs1data_EX, ALUsrcb, ALUoperation, result, zeroflag);
+	mux #(.N(2)) m1(ALUsrcb,{Rs2data_EX,immgen_out_EX},controlsig_EX[5]); 
 	adder #(.N(32)) add2(BRadd,IDEX_PC_out,{immgen_out_EX[30:0],1'b0}); //Full adder PC+offset
 	
 	//Between EX-MEM and MEM-WB Pipeline registers
