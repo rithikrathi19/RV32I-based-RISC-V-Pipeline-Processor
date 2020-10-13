@@ -115,7 +115,7 @@ module top(rst,clk);
 	
 	pipo_reg #(.N(71)) MEMWB(MEMWBout,MEMWBin,clk,rst);
 	//mux #(.N(2)) M3(writedata,{WBsrcA,WBsrcB},controlsig_WB[1]);
-	mux32 M3(writedata,WBsrcA,WBsrcB,controlsig_WB[1]);
+	mux32 M3(writedata,WBsrcB,WBsrcA,controlsig_WB[1]);
 	regfile Rfile(Rs1,Rs2,Rd,writedata,controlsig_WB[0],clk,rst,Rs1data,Rs2data);//Register File
 	pipo_reg #(.N(32)) PC(PCout,PCin,clk,rst); //Program Counter
 	//mux #(.N(2)) M1(PCin,{newPC,PCsrcB},PCsrc); //Mux for Program Counter

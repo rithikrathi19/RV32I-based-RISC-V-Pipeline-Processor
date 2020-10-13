@@ -19,11 +19,6 @@ module ALU(clk, A, B, ALUcontrol, result, zeroflag);
 				end
 		4'b0110: begin
 				result = A-B;
-				if (result == 32'd0) begin
-					zeroflag = 1'b1;
-				end else begin
-					zeroflag = 1'b0;
-				end
 				end
 		4'b0011: begin
 				result = A^B;
@@ -41,5 +36,10 @@ module ALU(clk, A, B, ALUcontrol, result, zeroflag);
 				result<= 32'd0;
 				end
 		endcase
+		if (result == 32'd0) begin
+					zeroflag = 1'b1;
+		end else begin
+					zeroflag = 1'b0;
+			end
 	end
 endmodule
