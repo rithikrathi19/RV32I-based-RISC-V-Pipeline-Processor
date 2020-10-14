@@ -1,7 +1,7 @@
 module ALU(clk, A, B, ALUcontrol, result, zeroflag);
 	input clk;
 	input [31:0] A, B;
-	input [3:0] ALUcontrol;
+	input [3:0] ALUcontrol; //Deciding the ALU Operation
 	output reg[31:0] result;
 	output reg zeroflag;
 		
