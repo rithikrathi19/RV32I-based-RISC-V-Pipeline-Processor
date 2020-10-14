@@ -1,6 +1,7 @@
 //Control Unit
 module controlunit(
 input [6:0]op,
+input rst,
 output reg [1:0]ALUop,  
 output reg ALUsrc,
 output reg MtoR,
@@ -12,7 +13,19 @@ output reg branch
 
 always@(*)
 begin
-    case(op)
+	if(rst)
+	begin
+		ALUop = 2'b00;
+		ALUsrc = 1'b0;
+		MtoR = 1'b0;
+		regwrite = 1'b0;
+		memread = 1'b0;
+		memwrite = 1'b0;
+		branch = 1'b0;
+	end
+	else
+	begin
+		case(op)
         7'b0110011://few R types -> add,sub,slt,sltu,sll,xor,srl,sra,or,and
 		begin
              ALUop = 2'b10;
@@ -66,6 +79,9 @@ begin
 		default:
 			 ALUop = 2'b10;
     endcase
+	end
+	
+    
 end
 
 endmodule

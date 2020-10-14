@@ -20,6 +20,6 @@ initial
     begin
     rst = 1'b1;
     #10 rst = 1'b0;
-    #100 $finish;
+    #200 $finish;
     end
 endmodule

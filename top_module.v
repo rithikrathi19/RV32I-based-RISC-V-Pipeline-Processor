@@ -39,7 +39,7 @@ module top(rst,clk);
 	assign IDEXin = {IFID_PC_out,Rs1data,Rs2data,immgen_out,funct7,funct3,Rd,controlsig};//Signals to be passed to EX stage
 	
 	pipo_reg #(.N(64)) IFID(IFIDout,IFIDin,clk,rst); //Program Counter
-	controlunit CU(opcode,ALUop,ALUsrc,MtoR,regwrite,memread,memwrite,branch);//Main Control Unit
+	controlunit CU(opcode,rst,ALUop,ALUsrc,MtoR,regwrite,memread,memwrite,branch);//Main Control Unit
 	imm_gen IG(immgen_out,IFID_instr_out,opcode);//Immediate generator depending on instruction type
 	
 	
