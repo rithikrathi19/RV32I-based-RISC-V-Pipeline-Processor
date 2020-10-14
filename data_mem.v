@@ -16,7 +16,7 @@ module data_mem(clk,r_enable,w_enable,address,wr_data,re_data);
 	dmem[i] = i; //Loading memory with its corresponding address location
  end
  
- always@(posedge clk)
+ always@(negedge clk)
  begin
 	if(w_enable)
 		dmem[address] <= wr_data;
