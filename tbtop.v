@@ -1,5 +1,5 @@
 // Test bench
-
+`timescale 1ns/1ns
 module tb_top();
 reg rst,clk;
 top pipeline(rst,clk);
