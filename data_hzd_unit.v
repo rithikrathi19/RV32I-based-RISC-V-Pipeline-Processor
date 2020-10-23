@@ -7,6 +7,7 @@ module fwdunit(
     input [4:0]exmem_rd,
     input memwb_RegWrite,
     input [4:0]memwb_rd,
+    input [1:0]ALUOp,
     output reg[1:0] forwardA,
     output reg[1:0] forwardB);
 
@@ -21,21 +22,44 @@ module fwdunit(
 
 always@(*)
 begin
-    //assign forwardA signal 
-    if(exmem_RegWrite == 1'b1 && exmem_rd != 5'b0 && exmem_rd == idex_rs1)
-        forwardA = 2'b10;
-    else if(memwb_RegWrite == 1'b1 && memwb_rd != 5'b0 && memwb_rd == idex_rs1)
-            forwardA = 2'b01;
-    else
-        forwardA = 2'b00;
+    //if I type
+    if(ALUOp == 2'b11)
+    begin
 
-    //assign forwardB signal
-    if(exmem_RegWrite == 1'b1 && exmem_rd != 5'b0 && exmem_rd == idex_rs2)
-        forwardB = 2'b10;
-    else if(memwb_RegWrite == 1'b1 && memwb_rd != 5'b0 && memwb_rd == idex_rs2)
-            forwardB  = 2'b01;
-    else
+        //assign forwardA signal 
+        if(exmem_RegWrite == 1'b1 && exmem_rd != 5'b0 && exmem_rd == idex_rs1)
+            forwardA = 2'b10;
+        else if(memwb_RegWrite == 1'b1 && memwb_rd != 5'b0 && memwb_rd == idex_rs1)
+                forwardA = 2'b01;
+        else
+            forwardA = 2'b00;
+
+        //assign forwardB signal
         forwardB = 2'b00;
+
+    end
+
+    //if other types dont skip rs2
+    else
+    begin
+
+        //assign forwardA signal 
+        if(exmem_RegWrite == 1'b1 && exmem_rd != 5'b0 && exmem_rd == idex_rs1)
+            forwardA = 2'b10;
+        else if(memwb_RegWrite == 1'b1 && memwb_rd != 5'b0 && memwb_rd == idex_rs1)
+                forwardA = 2'b01;
+        else
+            forwardA = 2'b00;
+
+        //assign forwardB signal
+        if(exmem_RegWrite == 1'b1 && exmem_rd != 5'b0 && exmem_rd == idex_rs2)
+            forwardB = 2'b10;
+        else if(memwb_RegWrite == 1'b1 && memwb_rd != 5'b0 && memwb_rd == idex_rs2)
+                forwardB  = 2'b01;
+        else
+            forwardB = 2'b00;
+        
+    end
 
 end
 endmodule
