@@ -1,3 +1,4 @@
+//Run1 without hazards
 add x3,x1,x2
 addi x4,x1,3
 sub x5,x2,x1
@@ -8,3 +9,15 @@ slli x8,x1,3
 srli x9,x2,1
 lw x10,5(x1)
 beq x5,x1,-11
+
+//Run2 with hazards
+addi x2,x1,10 //x2 has 11
+add x3,x2,x1 // x3 has 12
+addi x4,x1,1 // x4 has 2
+slli x5,x3,2 // x5 has 48
+sw x16,1(x4) // 16 stored at loc 3
+andi x6,x5,16 // x6 has 16
+addi x8,x31,1 // x8 has 32
+sub x7,x5,x6 // x7 has 32
+lw x10,5(x6) // x10 loaded with mem(21)
+beq x7,x8,-11 // branch to top
