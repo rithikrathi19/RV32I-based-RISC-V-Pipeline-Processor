@@ -22,7 +22,7 @@ module top(rst,clk);
 	wire [4:0]Rs1,Rs2,Rd;
 	wire [31:0]immgen_out,Rs1data,Rs2data;
 	
-	wire [150:0]IDEXin;
+	wire [160:0]IDEXin;
 	
 	wire [1:0]ALUop;
 	wire ALUsrc,MtoR,regwrite,memread,memwrite,branch;
@@ -36,7 +36,7 @@ module top(rst,clk);
 	assign Rs1 = IFIDout[19:15];
 	assign Rs2 = IFIDout[24:20];
 	assign Rd = IFIDout[11:7];
-	assign IDEXin = {IFID_PC_out,Rs1data,Rs2data,immgen_out,funct7,funct3,Rd,controlsig};//Signals to be passed to EX stage
+	assign IDEXin = {Rs1,Rs2,IFID_PC_out,Rs1data,Rs2data,immgen_out,funct7,funct3,Rd,controlsig};//Signals to be passed to EX stage
 	
 	pipo_reg #(.N(64)) IFID(IFIDout,IFIDin,clk,rst); //Program Counter
 	controlunit CU(opcode,rst,ALUop,ALUsrc,MtoR,regwrite,memread,memwrite,branch);//Main Control Unit
@@ -44,10 +44,12 @@ module top(rst,clk);
 	
 	
 	//Between ID-EX and EX-MEM Pipeline registers
-	wire [150:0]IDEXout;
+	wire [160:0]IDEXout;
 	wire [2:0]funct3_EX;
 	wire [6:0]funct7_EX;
 	wire [4:0]Rd_EX;
+	wire [4:0]Rs1_EX;
+	wire [4:0]Rs2_EX;
 	wire [31:0]Rs1data_EX,Rs2data_EX,immgen_out_EX,ALUsrcb;
 	wire [31:0]IDEX_PC_out;
 	wire [7:0]controlsig_EX;
@@ -55,9 +57,13 @@ module top(rst,clk);
 	wire [3:0]ALUoperation;
 	wire [31:0]result;
 	wire zeroflag;
+	wire [1:0]forwardA,forwardB;
+	wire [31:0]ALUsrc1,ALUsrc2;
 	
 	wire [106:0]EXMEMin;
 	
+	assign Rs1_EX = IDEXout[160:156];
+	assign Rs2_EX = IDEXout[155:151];
 	assign IDEX_PC_out = IDEXout[150:119];
 	assign Rs1data_EX = IDEXout[118:87];
 	assign Rs2data_EX = IDEXout[86:55];
@@ -67,15 +73,17 @@ module top(rst,clk);
 	assign Rd_EX = IDEXout[12:8];
 	assign controlsig_EX = IDEXout[7:0];
 	
-	assign EXMEMin = {controlsig_EX[4:0],BRadd,zeroflag,result,Rs2data_EX,Rd_EX};
+	assign EXMEMin = {controlsig_EX[4:0],BRadd,zeroflag,result,ALUsrcb,Rd_EX};
 	
-	pipo_reg #(.N(151)) IDEX(IDEXout,IDEXin,clk,rst); 
+	pipo_reg #(.N(161)) IDEX(IDEXout,IDEXin,clk,rst); 
 	ALUcontrol ALUC(controlsig_EX[7:6], funct7_EX, funct3_EX, ALUoperation);
-	ALU A1(clk, Rs1data_EX, ALUsrcb, ALUoperation, result, zeroflag);
-	//mux #(.N(2)) m1(ALUsrcb,{Rs2data_EX,immgen_out_EX},controlsig_EX[5]); 
-	mux32 m1(ALUsrcb,Rs2data_EX,immgen_out_EX,controlsig_EX[5]);
+	ALU A1(clk, ALUsrc1, ALUsrc2, ALUoperation, result, zeroflag);
+	mux32 m1(ALUsrc2,ALUsrcb,immgen_out_EX,controlsig_EX[5]);
+	mux4_1 alumux1(ALUsrc1,Rs1data_EX,writedata,dmemaddr,32'b0,forwardA);
+	mux4_1 alumux2(ALUsrcb,Rs2data_EX,writedata,dmemaddr,32'b0,forwardB);
 	adder #(.N(32)) add2(BRadd,IDEX_PC_out,{immgen_out_EX[30:0],1'b0}); //Full adder PC+offset
-	
+
+
 	//Between EX-MEM and MEM-WB Pipeline registers
 	wire [106:0]EXMEMout;
 	wire [4:0]controlsig_MEM;
@@ -120,7 +128,10 @@ module top(rst,clk);
 	pipo_reg #(.N(32)) PC(PCout,PCin,clk,rst); //Program Counter
 	//mux #(.N(2)) M1(PCin,{newPC,PCsrcB},PCsrc); //Mux for Program Counter
 	mux32 M1(PCin,newPC,PCsrcB,PCsrc);
-	
+
+	fwdunit f1(Rs1_EX,Rs2_EX,controlsig_EX[3],Rd_MEM,controlsig_WB[0],Rd_WB,forwardA,forwardB);
+
+
 endmodule
 	
 	
