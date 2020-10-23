@@ -2,7 +2,7 @@
 
 module fwdunit(
     input  [4:0]idex_rs1,
-    input [4:0]]idex_rs2,
+    input [4:0]idex_rs2,
     input exmem_RegWrite,
     input [4:0]exmem_rd,
     input memwb_RegWrite,
@@ -45,7 +45,7 @@ module hzdunit(
     input [4:0]ifid_rs2, 
     input idex_MemRead,
     input [4:0]idex_rd,
-    output PCWrite,ifidWrite,stall    
+    output reg PCWrite,ifidWrite,stall    
 );
 
 //---- Function ----

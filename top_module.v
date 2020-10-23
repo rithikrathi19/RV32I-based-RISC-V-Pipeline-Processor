@@ -79,8 +79,6 @@ module top(rst,clk);
 	ALUcontrol ALUC(controlsig_EX[7:6], funct7_EX, funct3_EX, ALUoperation);
 	ALU A1(clk, ALUsrc1, ALUsrc2, ALUoperation, result, zeroflag);
 	mux32 m1(ALUsrc2,ALUsrcb,immgen_out_EX,controlsig_EX[5]);
-	mux4_1 alumux1(ALUsrc1,Rs1data_EX,writedata,dmemaddr,32'b0,forwardA);
-	mux4_1 alumux2(ALUsrcb,Rs2data_EX,writedata,dmemaddr,32'b0,forwardB);
 	adder #(.N(32)) add2(BRadd,IDEX_PC_out,{immgen_out_EX[30:0],1'b0}); //Full adder PC+offset
 
 
@@ -130,7 +128,8 @@ module top(rst,clk);
 	mux32 M1(PCin,newPC,PCsrcB,PCsrc);
 
 	fwdunit f1(Rs1_EX,Rs2_EX,controlsig_EX[3],Rd_MEM,controlsig_WB[0],Rd_WB,forwardA,forwardB);
-
+	mux4_1 alumux1(ALUsrc1,Rs1data_EX,writedata,dmemaddr,32'b0,forwardA);
+	mux4_1 alumux2(ALUsrcb,Rs2data_EX,writedata,dmemaddr,32'b0,forwardB);
 
 endmodule
 	
