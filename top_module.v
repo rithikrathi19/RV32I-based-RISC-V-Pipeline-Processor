@@ -6,6 +6,10 @@ module top(rst,clk);
 	wire [31:0]instruction; //instruction from memory
 	wire [31:0]newPC; //PC <- PC + 4
 	wire [63:0]IFIDin = {newPC,instruction};
+
+	wire PCwrite;
+	wire ifidwrite;
+	wire stall;
 	
 	
 	adder #(.N(32)) add1(newPC,PCout,32'd1); //Full adder for incrementing PC
@@ -27,7 +31,8 @@ module top(rst,clk);
 	wire [1:0]ALUop;
 	wire ALUsrc,MtoR,regwrite,memread,memwrite,branch;
 	wire [7:0]controlsig = {ALUop,ALUsrc,MtoR,regwrite,memread,memwrite,branch};//control signals
-	
+	wire [7:0]controlsig_f;
+
 	assign IFID_PC_out = IFIDout[63:32];
 	assign IFID_instr_out = IFIDout[31:0];
 	assign opcode = IFIDout[6:0];
@@ -36,9 +41,9 @@ module top(rst,clk);
 	assign Rs1 = IFIDout[19:15];
 	assign Rs2 = IFIDout[24:20];
 	assign Rd = IFIDout[11:7];
-	assign IDEXin = {Rs1,Rs2,IFID_PC_out,Rs1data,Rs2data,immgen_out,funct7,funct3,Rd,controlsig};//Signals to be passed to EX stage
+	assign IDEXin = {Rs1,Rs2,IFID_PC_out,Rs1data,Rs2data,immgen_out,funct7,funct3,Rd,controlsig_f};//Signals to be passed to EX stage
 	
-	pipo_reg #(.N(64)) IFID(IFIDout,IFIDin,clk,rst); //Program Counter
+	pipo_reg #(.N(64)) IFID(IFIDout,IFIDin,clk,rst,ifidwrite); //Program Counter
 	controlunit CU(opcode,rst,ALUop,ALUsrc,MtoR,regwrite,memread,memwrite,branch);//Main Control Unit
 	imm_gen IG(immgen_out,IFID_instr_out,opcode);//Immediate generator depending on instruction type
 	
@@ -75,10 +80,10 @@ module top(rst,clk);
 	
 	assign EXMEMin = {controlsig_EX[4:0],BRadd,zeroflag,result,ALUsrcb,Rd_EX};
 	
-	pipo_reg #(.N(161)) IDEX(IDEXout,IDEXin,clk,rst); 
+	pipo_reg #(.N(161)) IDEX(IDEXout,IDEXin,clk,rst,1'b1); 
 	ALUcontrol ALUC(controlsig_EX[7:6], funct7_EX, funct3_EX, ALUoperation);
 	ALU A1(clk, ALUsrc1, ALUsrc2, ALUoperation, result, zeroflag);
-	mux32 m1(ALUsrc2,ALUsrcb,immgen_out_EX,controlsig_EX[5]);
+	mux32 #(.N(32) )m1(ALUsrc2,ALUsrcb,immgen_out_EX,controlsig_EX[5]);
 	adder #(.N(32)) add2(BRadd,IDEX_PC_out,{immgen_out_EX[30:0],1'b0}); //Full adder PC+offset
 
 
@@ -104,7 +109,7 @@ module top(rst,clk);
 	
 	assign MEMWBin = {controlsig_MEM[4:3],re_data,dmemaddr,Rd_MEM};
 	
-	pipo_reg #(.N(107)) EXMEM(EXMEMout,EXMEMin,clk,rst); 
+	pipo_reg #(.N(107)) EXMEM(EXMEMout,EXMEMin,clk,rst,1'b1); 
 	data_mem dmem(clk,controlsig_MEM[2],controlsig_MEM[1],dmemaddr,dmemdata,re_data);
 	
 	//After MEM-WB Pipeline Register
@@ -119,17 +124,17 @@ module top(rst,clk);
 	assign WBsrcA = MEMWBout[68:37];
 	assign controlsig_WB = MEMWBout[70:69];
 	
-	pipo_reg #(.N(71)) MEMWB(MEMWBout,MEMWBin,clk,rst);
-	//mux #(.N(2)) M3(writedata,{WBsrcA,WBsrcB},controlsig_WB[1]);
-	mux32 M3(writedata,WBsrcB,WBsrcA,controlsig_WB[1]);
+	pipo_reg #(.N(71)) MEMWB(MEMWBout,MEMWBin,clk,rst,1'b1);
+	mux32 #(.N(32)) M3(writedata,WBsrcB,WBsrcA,controlsig_WB[1]);
 	regfile Rfile(Rs1,Rs2,Rd_WB,writedata,controlsig_WB[0],clk,rst,Rs1data,Rs2data);//Register File
-	pipo_reg #(.N(32)) PC(PCout,PCin,clk,rst); //Program Counter
-	//mux #(.N(2)) M1(PCin,{newPC,PCsrcB},PCsrc); //Mux for Program Counter
-	mux32 M1(PCin,newPC,PCsrcB,PCsrc);
+	pipo_reg #(.N(32)) PC(PCout,PCin,clk,rst,PCwrite); //Program Counter
+	mux32 #(.N(32)) M1(PCin,newPC,PCsrcB,PCsrc);
 
 	fwdunit f1(Rs1_EX,Rs2_EX,controlsig_EX[3],Rd_MEM,controlsig_WB[0],Rd_WB,ALUop,forwardA,forwardB);
 	mux4_1 alumux1(ALUsrc1,Rs1data_EX,writedata,dmemaddr,32'b0,forwardA);
 	mux4_1 alumux2(ALUsrcb,Rs2data_EX,writedata,dmemaddr,32'b0,forwardB);
+	hzdunit h1(Rs1,Rs2,controlsig_EX[2],Rd_EX,PCwrite,ifidwrite,stall);
+	mux32 #(.N(8)) csmux(controlsig_f,controlsig,7'b0,stall);
 
 endmodule
 	
