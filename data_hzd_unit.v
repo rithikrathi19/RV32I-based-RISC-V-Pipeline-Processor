@@ -83,14 +83,14 @@ begin
     begin
         if(idex_rd == ifid_rs1 || idex_rd == ifid_rs2)
             begin
-            stall = 1'b0;
+            stall = 1'b1;
             PCWrite = 1'b0;
             ifidWrite = 1'b0;
             end
     end
     else
     begin
-        stall = 1'b1;
+        stall = 1'b0;
         PCWrite = 1'b1;
         ifidWrite = 1'b1;
     end
