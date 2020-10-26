@@ -14,7 +14,7 @@ module regfile(
     always@(posedge rst) 
         $readmemh("regfile.txt",regs);
     
-    always@(readregA,readregB)
+    always@(*)
     begin
         readdataA <= regs[readregA];
         readdataB <= regs[readregB];

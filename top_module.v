@@ -134,7 +134,7 @@ module top(rst,clk);
 	mux4_1 alumux1(ALUsrc1,Rs1data_EX,writedata,dmemaddr,32'b0,forwardA);
 	mux4_1 alumux2(ALUsrcb,Rs2data_EX,writedata,dmemaddr,32'b0,forwardB);
 	hzdunit h1(Rs1,Rs2,controlsig_EX[2],Rd_EX,PCwrite,ifidwrite,stall);
-	mux32 #(.N(8)) csmux(controlsig_f,controlsig,7'b0,stall);
+	mux32 #(.N(8)) csmux(controlsig_f,controlsig,8'b0,stall);
 
 endmodule
 	
