@@ -20,4 +20,5 @@ andi x6,x5,16 // x6 has 16
 addi x8,x31,1 // x8 has 32
 sub x7,x5,x6 // x7 has 32
 lw x10,5(x6) // x10 loaded with mem(21)
-beq x7,x8,-11 // branch to top
+add x14,x10,x1 // x14 = mem(21) + 1 00150733
+beq x7,x8,-11 // branch to top FE838AE3

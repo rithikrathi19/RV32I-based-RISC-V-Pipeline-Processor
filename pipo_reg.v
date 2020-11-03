@@ -13,8 +13,8 @@ module pipo_reg #(parameter N=32) (out,in,clk,rst,pipo_write);
 		out <= 0;
 	else if(pipo_write)
 		out <= in;
-	else
-		out <= 0;
+	//else
+	//	out <= ;
  end
 
 endmodule
