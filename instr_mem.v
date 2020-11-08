@@ -12,7 +12,8 @@ module instr_mem(instruction,PCin,clk,rst);
  begin
  $readmemh("instr1.txt", memloc);// Reading the coded instructions to the memory
  end
- always@(posedge clk,posedge rst)
+ //always@(posedge clk,posedge rst)
+ always@(PCin,rst)
  begin
  
 	if(rst)

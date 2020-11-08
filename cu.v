@@ -41,7 +41,7 @@ begin
              ALUop = 2'b01;
 			 ALUsrc = 1'b0;
 			 MtoR = 1'bx;
-			 regwrite = 1'b1;
+			 regwrite = 1'b0;
 			 memread = 1'b0;
 			 memwrite = 1'b0;
 			 branch = 1'b1;
