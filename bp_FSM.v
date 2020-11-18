@@ -64,5 +64,24 @@ begin
     endcase
     op_state = next;
 end
-
 endmodule
+
+//Branch history table
+module bht(
+input [4:0]address,
+input update,
+input [1:0]new_state,
+output reg [1:0]curr_state
+);
+
+reg [1:0]bhtable[0:31];
+always@(*)
+begin
+if (update == 1'b1)
+    bhtable[address] = new_state;
+
+curr_state <= bhtable[address];
+end
+endmodule
+
+
