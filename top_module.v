@@ -2,6 +2,7 @@ module top(rst,clk);
 	input rst,clk;
 	
 	//Before the IF-ID Pipeline register
+	reg [34:0]btb[0:31];
 	wire [31:0]PCin,PCout; //Program Counter
 	wire [31:0]instruction; //instruction from memory
 	wire [31:0]newPC; //PC <- PC + 4
@@ -10,7 +11,6 @@ module top(rst,clk);
 	wire PCwrite;
 	wire ifidwrite;
 	wire stall;
-	
 	
 	adder #(.N(32)) add1(newPC,PCout,32'd1); //Full adder for incrementing PC
 	instr_mem imem(instruction,PCout,clk,rst); //Instr Memory

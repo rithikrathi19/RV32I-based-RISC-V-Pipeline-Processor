@@ -67,21 +67,46 @@ end
 endmodule
 
 //Branch history table
-module bht(
-input [4:0]address,
-input update,
-input [1:0]new_state,
-output reg [1:0]curr_state
-);
+module btb_input(rst,btb,index,PredictedTarget,curr_state,mux_predict);
 
-reg [1:0]bhtable[0:31];
-always@(*)
+input rst;
+input [34:0]btb[0:31]
+input [4:0]index;
+output reg [1:0]curr_state;
+output reg [31:0]PredictedTarget;
+output mux_predict;
+
+reg i;
+initial
 begin
-if (update == 1'b1)
-    bhtable[address] = new_state;
-
-curr_state <= bhtable[address];
+    for(i = 0; i < 32; i = i+1)
+	btable[i] <= 35'd0;
+end
+always@(index,rst)
+begin
+    if(rst) begin
+        for(i = 0; i < 32; i = i+1)
+		btable[i] <= 35'd0;
+    end
+    else 
+        {PredictedTarget,curr_state,mux_predict} = btable[index]; 
 end
 endmodule
+
+module btb_update(btb,index,TargetAddress,next_state,predict_bit);
+input [34:0]btb[0:31];
+input [4:0]index;
+input [32:0]TargetAddress;
+input [1:0] next_state;
+input predict_bit;
+
+always@(*)
+begin 
+    btb[index] = {TargetAddress, next_state, predict_bit}; 
+end
+
+endmodule
+
+
 
 
