@@ -7,8 +7,6 @@ always@(*)
 begin
     if(br==1 & z==1)
         f = 1;
-    else if(predadd != actadd)
-        f = 1;
     else
         f = 0;
 end
