@@ -7,7 +7,6 @@ output reg pred; //predicted operation for branch
 
 localparam strong_nt = 2'b00,weak_nt = 2'b01, weak_t =2'b10,strong_t =2'b11;
 reg [1:0]next;
-
 //Output and Next state computation
 //Same always block as we have considered Moore machine
 always@(*)
