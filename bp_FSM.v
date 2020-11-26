@@ -8,16 +8,6 @@ output reg pred; //predicted operation for branch
 localparam strong_nt = 2'b00,weak_nt = 2'b01, weak_t =2'b10,strong_t =2'b11;
 reg [1:0]next;
 
-//State Assigment
-/*
-always@(posedge clk,posedge rst)
-begin
-    if(rst)
-    curr <= strong_nt;
-    else
-    next <= curr;
-end
-*/
 //Output and Next state computation
 //Same always block as we have considered Moore machine
 always@(*)
@@ -71,34 +61,4 @@ begin
     op_state = next;
 end
 endmodule
-
-//Branch history table
-/*
-module btb_input(rst,btb,index,PredictedTarget,curr_state,mux_predict);
-
-input rst;
-input [34:0]btb[0:31];
-input [4:0]index;
-output reg [1:0]curr_state;
-output reg [31:0]PredictedTarget;
-output reg mux_predict;
-
-reg i;
-initial
-begin
-    for(i = 0; i < 32; i = i+1)
-	btb[i] <= 35'd0;
-end
-always@(index,rst)
-begin
-    if(rst) begin
-        for(i = 0; i < 32; i = i+1)
-		btb[i] <= 35'd0;
-    end
-    else 
-        {PredictedTarget,curr_state,mux_predict} = btb[index]; 
-end
-endmodule
-*/
-
 
